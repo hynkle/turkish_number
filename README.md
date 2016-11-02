@@ -1,6 +1,6 @@
 # TurkishNumber
 
-This tool performs the very small task of turning a number (e.g. 25) into words in Turkish (e.g. "yırmı beş").
+This tool performs the very small task of turning a number (e.g. 25) into words in Turkish (e.g. "yirmi beş").
 
 It currently works for positive numbers less than one trillion.
 
