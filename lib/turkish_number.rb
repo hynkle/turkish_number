@@ -2,7 +2,7 @@ require "turkish_number/version"
 
 module TurkishNumber
 
-  MINIMUM_HANDLEABLE_NUMBER = 0
+  MINIMUM_HANDLEABLE_NUMBER = -999_999_999_999
   MAXIMUM_HANDLEABLE_NUMBER = 999_999_999_999
   BREAKNUMBERS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1_000, 1_000_000, 1_000_000_000].sort!.reverse!.freeze
   MAPPINGS = {
@@ -31,7 +31,7 @@ module TurkishNumber
     1_000_000_000 => 'milyar'
   }.freeze
 
-  def self.to_words(number)
+  def self.write(number)
     begin
       number = Integer(number)
     rescue ArgumentError
@@ -41,22 +41,39 @@ module TurkishNumber
     raise ArgumentError, "#{number} is too small" if number < MINIMUM_HANDLEABLE_NUMBER
     raise ArgumentError, "#{number} is too big" if number > MAXIMUM_HANDLEABLE_NUMBER
 
-    return MAPPINGS.fetch(number) if MAPPINGS.key?(number)
+    negative = number < 0 ? true : false
+    number = (number * -1) if negative == true
+
+    string = ""
+    string += "eksi " if negative == true
+
+    return string += MAPPINGS.fetch(number) if MAPPINGS.key?(number)
 
     breaknumber = BREAKNUMBERS.detect { |b| b < number }
     unless breaknumber
       raise "no breaknumber found that is less than #{number}"
     end
 
-    breaknumber_multiplier = number / breaknumber
-    
-    leftovers = number - (breaknumber * breaknumber_multiplier)
+    breaknumber_multiplier = (number / breaknumber)
+    break_high = breaknumber * breaknumber_multiplier
+    leftovers = number - break_high
 
-    components = [breaknumber]
+    components = []
+    components << 1 if MAPPINGS.keys.last(2).include?(break_high)
+    components << breaknumber
     components << leftovers unless leftovers == 0
     components.unshift(breaknumber_multiplier) unless breaknumber_multiplier == 1
 
-    components.map{|component_number| TurkishNumber.to_words(component_number)}.join(' ')
+    string += components.map{|component_number| self.write(component_number)}.join(' ')
+    string
+  end
+
+  def self.to_words(number)
+    string = TurkishNumber.write(number)
+    string = "bir #{string}" if string == "milyon" || string == "milyar"
+    string = string.gsub("eksi", "eksi bir") if string == "eksi milyon" || string == "eksi milyar"
+    string = string.gsub("milyar milyon", "milyar bir milyon") if string.include?("milyar milyon")
+    string
   end
 
 end

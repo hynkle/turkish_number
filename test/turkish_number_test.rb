@@ -37,10 +37,13 @@ class TurkishNumberTest < Minitest::Test
     1_011 => 'bin on bir',
     1_111 => 'bin yüz on bir',
     2_000 => 'iki bin',
-    1_000_000 => 'milyon',
-    1_000_000_000 => 'milyar',
+    1_000_000 => 'bir milyon',
+    1_000_000_000 => 'bir milyar',
     603_862_955_583 =>  'altı yüz üç milyar sekiz yüz altmış iki milyon dokuz yüz elli beş bin beş yüz seksen üç',
-    999_999_999_999 => 'dokuz yüz doksan dokuz milyar dokuz yüz doksan dokuz milyon dokuz yüz doksan dokuz bin dokuz yüz doksan dokuz'
+    999_999_999_999 => 'dokuz yüz doksan dokuz milyar dokuz yüz doksan dokuz milyon dokuz yüz doksan dokuz bin dokuz yüz doksan dokuz',
+    -1000 => 'eksi bin',
+    -999_999 => 'eksi dokuz yüz doksan dokuz bin dokuz yüz doksan dokuz',
+    -1_938_881 => 'eksi bir milyon dokuz yüz otuz sekiz bin sekiz yüz seksen bir'
   }
 
   mappings.each do |number, given_words|
@@ -50,15 +53,15 @@ class TurkishNumberTest < Minitest::Test
     end
   end
 
-  def test_cannot_handle_negatives
-    assert_raises(ArgumentError) do
-      TurkishNumber.to_words(-1)
-    end
-  end
-
   def test_cannot_handle_trillions
     assert_raises(ArgumentError) do
       TurkishNumber.to_words(1_000_000_000_000)
+    end
+  end
+
+  def test_cannot_handle_negative_trillions
+    assert_raises(ArgumentError) do
+      TurkishNumber.to_words(-1_000_000_000_000)
     end
   end
 
