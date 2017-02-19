@@ -2,7 +2,7 @@
 
 This tool performs the very small task of turning a number (e.g. 25) into words in Turkish (e.g. "yirmi beş").
 
-It currently works for positive numbers less than one trillion.
+It currently works for numbers up to one trillion and their corresponding negative number.
 
 ## Usage
 
